@@ -1,109 +1,15 @@
 import numpy as np
 import pandas as pd
 import json
+import sys
+from Cards import *
+from Players import *
+from Board import *
+from Rodada import *
+from Dealer import *
 
-class Cards:
-    def __init__(self):
-        pass
-    
-    def reset_mount(self):
-        self.mount_cards = json.load(open('perguntas.json'))
-    
-    def next_card(self):
-        """
-        
-        Get next card in the mount
-        """
-        carta = self.mount_cards.pop(np.random.randint(0, len(self.mount_cards), 1)[0])
-        if np.random.random(1) >= 0.95:
-            pos_palpite = np.random.randint(1, 20, 1)[0]
-            carta['{0}'.format(pos_palpite)] = 'Palpite a qualquer hora'
-        if np.random.random(1) >= 0.65:
-            pos_perde_vez = np.random.randint(1, 20, 1)[0]
-            carta['{0}'.format(pos_perde_vez)] = 'Perde a vez'
-        
-        self.card = carta
-        self.id = carta['id']
-        self.dica = carta['dica']
 
-class Board:
-    def __init__(self):
-        pass
-    
-    def setting_board(self):
-        """
-        
-        Setting total length of the board
-        """
-        self.board_tot = 121#int(input('Tamanho do tabuleiro'))
-    
-
-class Dealer:
-    def __init__(self):
-        pass
-    
-    def first_dealer(self, num_players):
-        self.num_players = num_players
-        self.dealer = np.random.randint(0, self.num_players, 1)[0]
-    
-    def next_dealer(self):
-        self.dealer = self.dealer % self.num_players
-    
-    
-class Players:
-    def __init__(self):
-        return
-        
-    def getting_players(self):
-        """
-        
-        Define how many players, and their usernames
-        """
-        players = []
-        self.num_players = int(input('Number of players'))
-        for i in range(self.num_players):
-            players.append(input('Player {0}'.format(i+1)))
-        self.players = np.array(players)
-    
-    
-class Rodada():
-    def __init__(self):
-        pass
-    
-    def initialize_rodada(self, dealer, num_players, vez_de_quem, card):
-        self.dealer = dealer
-        self.num_players = num_players
-        self.card = card
-        self.questions = []
-        print(self.vez_de_quem)
-        self.vez_de_quem = self.vez_de_quem+1
-        print(self.vez_de_quem)
-        pass
-    
-    def core_rodada(self):
-        while len(self.questions) <= 20:
-            self.next_question()
-            if input('Chute') == self.card['resposta']:
-#             Acertou
-                return True
-#         Errou
-        return False
-
-    def next_question(self):
-        """
-        
-        Escolhe e mostra a próxima pergunta
-        """
-        question = input('Question')
-        if question in self.questions:
-            print('Escolhe outra')
-        else: 
-            self.questions.append(question)
-            print(self.card[question])
-    
-    
-    
-class Partida(Cards, Players, Board, Rodada, Dealer):
+class Perfil(Cards, Players, Board, Rodada, Dealer):
     def __init__(self):
         Cards.__init__(self)
         Players.__init__(self)
@@ -116,19 +22,76 @@ class Partida(Cards, Players, Board, Rodada, Dealer):
         """
         Define the player's username and setting the mount of cards
         """
+        self.partida_ativa = True
         Players.getting_players(self)
         Cards.reset_mount(self)
         Dealer.first_dealer(self, self.num_players)
         self.vez_de_quem = (self.dealer+1) % self.num_players
+        Board.setting_board(self)
         return
     
+    def new_game(self):
+        """
+        
+        New Game ?
+        """
+        while True:
+            resposta = input('Novo jogo ? \n[Y/N]:').upper()
+            if resposta == 'Y':
+#                 Nova partida
+                return
+            elif resposta == 'N':
+                self.partida_ativa = False
+                return
+#                 Encerrar
+    
+    def end_game_cards(self):
+        """
+        
+        End  Game, start another one ?
+        """
+        print('Jogo acabou Galera')
+        self.new_game()
+    
+    def end_game_winner(self, player):
+        """
+        
+        End  Game and someone won
+        """
+        print(self.players[player], 'ganhou, os outros são muito ruins.\nPelo amor')
+        self.new_game()
+    
     def proxima_rodada(self, dealer):
-        if len(self.mount_cards) <= 0:
-            print('Jogo acabou Galera')
-            raise TypeError("Acabou o Jogo")
+        """
+        
+        Verficiar se o jogo acabou seja por falta de cartas ou pontuação
+        Caso contrário puxar a próxima carta e começar a rodada
+        """
+        if len(self.mount_cards) <= 0: self.end_game_cards()
+        elif self.pontuacao.max() >= self.board_tot: self.end_game_winner(self.pontuacao.argmax())
         self.next_card()
-        self.initialize_rodada(dealer=dealer, num_players=self.num_players, vez_de_quem=self.vez_de_quem, card=self.card)
-        print('dentro da Partida', self.vez_de_quem)
+        return self.initialize_rodada()
+    
+    def print_final_rodada(self):
+        print('\n',  100*'-', sep='')
+        print('Dealer:', self.players[self.dealer])
+        for player, pts in zip(self.players, self.pontuacao):
+            print(player, 'tem', pts, 'pontos')
+        print(100*'-')
+    
+    def partida(self):
+        """
         
+        Aqui será controlada a partida como um todo
+        """
+        self.initializate_partida()
+        while self.partida_ativa:
+            print('Next Dealer: ', self.players[self.dealer], end='\n', sep='')
+            player, pontos = self.proxima_rodada(self.dealer)
+            self.pontuacao[player] += 20 - pontos
+            self.pontuacao[self.dealer] += pontos
+            self.print_final_rodada()
+            self.next_dealer()
+        pass
 
-        
+    
