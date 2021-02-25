@@ -12,9 +12,9 @@ class Players:
         Define how many players, and their usernames
         """
         players = []
-        self.num_players = int(input('Number of players'))
+        self.num_players = int(input('Number of players: '))
         for i in range(self.num_players):
-            players.append(input('Player {0}'.format(i+1)))
+            players.append(input('Player {0}: '.format(i+1)))
         self.players = np.array(players)
         self.pontuacao = np.repeat(0, self.num_players)
     

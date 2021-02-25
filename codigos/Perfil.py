@@ -28,6 +28,7 @@ class Perfil(Cards, Players, Board, Rodada, Dealer):
         Dealer.first_dealer(self, self.num_players)
         self.vez_de_quem = (self.dealer+1) % self.num_players
         Board.setting_board(self)
+        self.dicas_proibidas = []
         return
     
     def new_game(self):
@@ -90,7 +91,6 @@ class Perfil(Cards, Players, Board, Rodada, Dealer):
             player, pontos = self.proxima_rodada(self.dealer)
             self.pontuacao[player] += 20 - pontos
             self.pontuacao[self.dealer] += pontos
-            self.print_final_rodada()
             self.next_dealer()
         pass
 

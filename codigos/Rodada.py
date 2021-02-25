@@ -1,5 +1,4 @@
 import numpy as np
-import pandas as pd
 import json
 
 class Rodada():
@@ -15,16 +14,19 @@ class Rodada():
         
         Controle de quem é a vez e quem acertou
         """
-        while len(self.questions) <= 20:
+        while len(self.questions) < 20:
             print('\n', self.players[self.vez_de_quem], ' ist dran', sep='')
             if not self.next_question(): continue
-            chute = input("Chute: ").upper()
+            chute = input("\tDica: {0} \t\t Chute: ".format(self.card['dica'])).upper()
             if chute == self.card['resposta'].upper():
 #             Acertou
-                print("ACERTOU\n")
+                print(30*'*')
+                print("*", 8*" " ,"ACERTOU", 9*' ', '*')
+                print(30*'*', '\n')
                 return self.vez_de_quem, len(self.questions)
             print("NOPE")
             self.vez_de_quem = self.next_player(self.dealer, self.vez_de_quem)
+        print("Resposta certa:", self.card['resposta'])
         return self.dealer, len(self.questions)
 
     def next_question(self):
@@ -32,15 +34,15 @@ class Rodada():
         
         Escolhe e mostra a próxima pergunta
         """
-        print("Perguntas já escolhidas:", sorted(list(map(int, self.questions))))
+        print("\tPerguntas já escolhidas:", sorted(list(map(int, self.questions))))
         while True:
-            question = input('Number of the question: ')
+            question = input('\tNumber of the question: ')
             if not question.isnumeric(): continue
             if question in self.questions:
                 print('Escolhe outra')
             elif 0 < int(question) and int(question) <= 20:
                 self.questions.append(question)
-                print('Pergunta {0}:'.format(question), self.card[question])
+                print('\tPergunta {0}:'.format(question), self.card[question])
                 if not self.casos_exepcionais(self.card[question]): return False
                 return True
     
