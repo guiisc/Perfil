@@ -2,11 +2,11 @@ import numpy as np
 import pandas as pd
 import json
 import sys
-from Cards import *
-from Players import *
-from Board import *
-from Rodada import *
-from Dealer import *
+from codigos.Cards import *
+from codigos.Players import *
+from codigos.Board import *
+from codigos.Rodada import *
+from codigos.Dealer import *
 
 
 class Perfil(Cards, Players, Board, Rodada, Dealer):
@@ -86,7 +86,7 @@ class Perfil(Cards, Players, Board, Rodada, Dealer):
         """
         self.initializate_partida()
         while self.partida_ativa:
-            print('Next Dealer: ', self.players[self.dealer], end='\n', sep='')
+            self.print_final_rodada()
             player, pontos = self.proxima_rodada(self.dealer)
             self.pontuacao[player] += 20 - pontos
             self.pontuacao[self.dealer] += pontos

@@ -15,9 +15,12 @@ class Cards:
         Get next card in the mount
         """
         carta = self.mount_cards.pop(np.random.randint(0, len(self.mount_cards), 1)[0])
-        if np.random.random(1) >= 0.95:
+        if np.random.random(1) >= 0.85:
             pos_palpite = np.random.randint(1, 20, 1)[0]
-            carta['{0}'.format(pos_palpite)] = 'Palpite a qualquer hora'
+            carta['{0}'.format(pos_palpite)] = 'Escolha alguém para avançar 2 casas'
+        if np.random.random(1) >= 0.85:
+            pos_palpite = np.random.randint(1, 20, 1)[0]
+            carta['{0}'.format(pos_palpite)] = 'Escolha alguém para recuar 3 casas'
         if np.random.random(1) >= 0.65:
             pos_perde_vez = np.random.randint(1, 20, 1)[0]
             carta['{0}'.format(pos_perde_vez)] = 'Perde a vez'
