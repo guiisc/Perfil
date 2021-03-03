@@ -1,14 +1,64 @@
+from codigos.Perfil import *
+import numpy as np
 from tkinter import *
 import tkinter as tk
 
-class Application():
+class Application(Perfil):
     def __init__(self, root):
         root.title('Perfil')
-        mainframe = tk.Frame(root, height='12c', width='30c', bg='#f26d14') # orange
-        mainframe.grid(column=1, row=1, columnspan=10, rowspan=10)
+        self.mainframe = tk.Frame(root, height='12c', width='30c', bg='#f26d14') # orange
+        self.mainframe.grid(column=1, row=1, columnspan=10, rowspan=10)
+        Perfil.__init__(self)
+        self.begin()
 
+    def get_players(self):
+        def name_player():
+            players_name.append(var_name.get())
+
+        players_name = []
+        while len(players_name) >= self.num_players:
+            g_players = tk.Label(self.begin_frame, text='Player {0}'.format(len(players_name)+1))
+            g_players.place(relx=.2, rely=.5, relheight=.1, relwidth=.2)
+            var_name = StringVar()
+            players_name_entry = tk.Entry(self.begin_frame, textvariable=var_name)
+            players_name_entry.place(relx=.45, rely=.5, relheight=.1, relwidth=.2)
+            ok_button2 = tk.Button(self.begin_frame, text='Ok', command=lambda name = var_name.get(): players_name.append(name))
+            ok_button2.place(relx=.7, rely=.5, relheight=.1, relwidth=.1)
+            ok_button2.wait_variable(players_name_entry)
+            if len(players_name) == self.num_players: root.destroy()
+            self.begin_frame.update
+        self.players = np.array(players_name)
+        self.pontuacao = np.repeat(0, self.num_players)
+
+
+    def get_num_players(self):
+        try:
+            self.num_players = int(self.n_players.get())
+            self.get_players()
+            self.begin_frame.destroy()
+            self.game()
+        except ValueError:
+            pass
+
+    def begin(self):
+        # begin_background = tk.Image(open('bg.jpeg'))
+        self.begin_frame = tk.Frame(self.mainframe, bg='#000000')
+        self.begin_frame.place(relx=.1, rely=.1, relheight=.8, relwidth=.8)
+        initial = tk.Label(self.begin_frame, text='Welcome to Perfil\nNumber of players')
+        initial.place(relx=.3, rely=.1 , relheight=.2, relwidth=.4)
+
+        self.n_players = StringVar()
+        num_players_entry = tk.Entry(self.begin_frame, textvariable=self.n_players)
+        num_players_entry.place(relx=.4, rely=.35 , relheight=.05, relwidth=.1)
+        ok_button = tk.Button(self.begin_frame, text='Ok', command=self.get_num_players)
+        ok_button.place(relx=.55, rely=.35, relheight=.05, relwidth=.05)
+        ok_button.wait_variable(self.n_players)
+        # ok_button.destroy()
+
+
+    def game(self):
         # left side with the questions, id, hint 
-        frame1 = tk.Frame(mainframe, bg='#48f214') # lime green
+        frame1 = tk.Frame(self.mainframe, bg='#48f214') # lime green
         frame1.place(relheight=1, relwidth=.5)
         rodada_label = tk.Label(frame1, text='Rodada {0}'.format('self.rodada'), padx=5, pady=0)
         rodada_label.place(relx=.15, rely=.05, relwidth=0.7)
@@ -26,17 +76,26 @@ class Application():
                 opcoes_perguntas.append(tk.Button(opcoes_frame, text='{0}'.format(len(opcoes_perguntas)+1), padx=5, pady=5))
                 opcoes_perguntas[-1].place(relx=coluna/5 + .05, rely=linha/4 + .05, relheight=.15 ,relwidth=.1)
 
-        perguntas_frame = tk.Frame(frame1, height=mainframe['height']/3, width=mainframe['width']/2, bg='#fc18fc') # pink
+        perguntas_frame = tk.Frame(frame1, bg='#fc18fc') # pink
         perguntas_frame.place(relx=.15, rely=.65, relheight=.3, relwidth=.7)
         pergunta = tk.Label(perguntas_frame, text='Pergunta {0}\n{1}'.format('self.num_question', 'question'))
         pergunta.place(relx=.1, rely=.05, relheight=.55, relwidth=.8)
 
         resposta = tk.Entry(perguntas_frame, text='Chute')
-        resposta.place(relx=.1, rely=.65, relheight=.3, relwidth=.8)
+        resposta.place(relx=.1, rely=.65, relheight=.3, relwidth=.55)
+        guess_button = tk.Button(perguntas_frame, text='Guess')
+        guess_button.place(relx=.7, rely=.65, relheight=.3, relwidth=.2)
 
         # right side with the board
-        board = tk.Frame(mainframe, bg='#539edf') # light blue
+        board = tk.Frame(self.mainframe, bg='#539edf') # light blue
         board.place(relx=0.5, rely=0, relheight=1, relwidth=.5)
+        
+        players_frame = []
+        for coluna in range(self.players):
+            players_frame.append(tk.Frame(board))
+            players_frame[-1].place(relx=.05 + coluna*(.9-0.05*self.players)/self.players, rely=.1, relheight=.3, relwidth=(.9-0.05*self.players)/self.players)
+            tk.Label(players_frame[-1], text='Player {0}'.format(coluna)).place(relx=0, rely=0, relheight=.7, relwidth=1)
+            tk.Label(players_frame[-1], text='{0} pts'.format(self.pontuacao[coluna])).place(relx=0, rely=.6, relheight=.2, relwidth=1)
         
 
 root = Tk()
