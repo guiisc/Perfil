@@ -10,15 +10,16 @@ class Cards:
     def reset_mount(self):
         path = os.path.realpath('..')
         self.mount_cards = json.load(open(path+'\Perfil\perguntas.json'), encoding='None')
+        self.rodada = 0
     
     def next_card(self):
         """
         
         Get next card in the mount
         """
+        self.rodada += 1
         while True:
             carta = self.mount_cards.pop(np.random.randint(0, len(self.mount_cards), 1)[0])
-            if carta['id'] in self.dicas_proibidas: continue
             if np.random.random(1) >= 0.85:
                 pos_palpite = np.random.randint(1, 20, 1)[0]
                 carta['{0}'.format(pos_palpite)] = 'Escolha alguém para avançar 2 casas'

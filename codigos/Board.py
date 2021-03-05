@@ -1,7 +1,3 @@
-import numpy as np
-import pandas as pd
-import json
-
 class Board:
     def __init__(self):
         pass
