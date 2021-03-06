@@ -23,11 +23,9 @@ class Perfil(Cards, Players, Board, Rodada, Dealer):
         Define the player's username and setting the mount of cards
         """
         self.partida_ativa = True
-        # Players.getting_players(self)
-        # Cards.reset_mount(self)
-        Dealer.first_dealer(self, self.num_players)
+        self.first_dealer()
         self.vez_de_quem = (self.dealer+1) % self.num_players
-        Board.setting_board(self)
+        self.setting_board()
         # self.dicas_proibidas = []
         return
     

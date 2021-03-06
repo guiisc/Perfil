@@ -1,18 +1,26 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from codigos.Perfil import *
+from codigos.Cards import *
 import numpy as np
 from tkinter import *
 import tkinter as tk
 
-class Application(Perfil):
+class Application(Perfil, Cards):
     def __init__(self, root):
         root.title('Perfil')
         self.mainframe = tk.Frame(root, height='12c', width='30c', bg='#f26d14') # orange
         self.mainframe.grid(column=1, row=1, columnspan=10, rowspan=10)
         Perfil.__init__(self)
+        Cards.__init__(self)
         self.begin()
     
     def begin(self):
-        # begin_background = tk.Image(open('bg.jpeg'))
+        """
+        
+        Set Initial Frame
+        """
         self.begin_frame = tk.Frame(self.mainframe, bg='#000000')
         self.begin_frame.place(relx=.1, rely=.1, relheight=.8, relwidth=.8)
         greeting = tk.Label(self.begin_frame, text='Welcome to Perfil', bg='#9033df')
@@ -27,6 +35,10 @@ class Application(Perfil):
         self.ok_button.place(relx=.55, rely=.45, relheight=.08, relwidth=.05)
         
     def get_num_players(self, which_entry, entry):
+        """
+        
+        Get the number of players
+        """
         try:
             self.num_players = int(self.n_players.get())
             self.pontuacao = np.repeat(0, self.num_players)
@@ -36,6 +48,10 @@ class Application(Perfil):
             pass
     
     def get_players(self, which_entry, entry):
+        """
+        
+        Get the name of the players
+        """
         def name_player(event):
             players_name.append(entry.get())
             which_entry['text'] = 'Player ' + str(len(players_name) + 1)
@@ -48,39 +64,40 @@ class Application(Perfil):
         self.ok_button.bind('<Button-1>', name_player)
 
     def game(self):
+        """
+        
+        Set the game frame
+        """
         self.reset_mount()
-        self.next_card()
         # left side with the questions, id, hint 
         self.left_side_game()
         # right side with the board
         self.right_side_game()
+        self.initializate_partida()
+        self.next_card()
     
     def left_side_game(self):
+        """
+        
+        Set the top left side of the game grame
+        """
         frame1 = tk.Frame(self.mainframe, bg='#48f214') # lime green
         frame1.place(relheight=1, relwidth=.5)
-        rodada_label = tk.Label(frame1, text='Rodada {0}'.format(self.rodada), padx=5, pady=0)
-        rodada_label.place(relx=.15, rely=.05, relwidth=0.7)
-        id_question_label = tk.Label(frame1, text='ID: {0}'.format(self.card['id']), padx=5)
-        id_question_label.place(relx=.15, rely=.12, relwidth=0.3)
-        dica_question_label = tk.Label(frame1, text='DICA: {0}'.format(self.card['dica']), padx=5)
-        dica_question_label.place(relx=.55, rely=0.12, relwidth=0.3)
+        self.label_rodada = tk.Label(frame1, text=None, padx=5, pady=0)
+        self.label_rodada.place(relx=.15, rely=.05, relwidth=0.7)
+        self.label_id_card = tk.Label(frame1, text=None, padx=5)
+        self.label_id_card.place(relx=.15, rely=.12, relwidth=0.3)
+        self.label_dica = tk.Label(frame1, text=None, padx=5)
+        self.label_dica.place(relx=.55, rely=0.12, relwidth=0.3)
         
         self.question_frame(frame1)
         self.guess_frame(frame1)
-        
-    def guess_frame(self, frame1):
-        perguntas_frame = tk.Frame(frame1, bg='#fc18fc') # pink
-        perguntas_frame.place(relx=.15, rely=.65, relheight=.3, relwidth=.7)
-        self.pergunta = tk.Label(perguntas_frame, text='Pergunta None \n None', wraplength=250)
-        self.pergunta.place(relx=.1, rely=.05, relheight=.55, relwidth=.8)
-        
-        _chute = tk.StringVar(perguntas_frame)
-        resposta = tk.Entry(perguntas_frame, justify=CENTER, textvariable=_chute)
-        resposta.place(relx=.1, rely=.65, relheight=.3, relwidth=.55)
-        guess_button = tk.Button(perguntas_frame, text='Guess', command= lambda i=_chute.get(): self.chute(i))
-        guess_button.place(relx=.7, rely=.65, relheight=.3, relwidth=.2)
     
     def question_frame(self, frame1):
+        """
+        
+        Set the 20-button frame, and those buttons for each question
+        """
         opcoes_frame = tk.Frame(frame1, relief=RAISED, bg='black')
         opcoes_frame.place(relx=.2, rely=.2, relheight=.4, relwidth=0.6)
         
@@ -91,16 +108,28 @@ class Application(Perfil):
                 opcoes_perguntas[-1].place(relx=coluna/5 + .05, rely=linha/4 + .05, relheight=.15 ,relwidth=.1)
         self.opcoes_perguntas = self.to_dict(opcoes_perguntas)
     
+    def guess_frame(self, frame1):
+        perguntas_frame = tk.Frame(frame1, bg='#fc18fc') # pink
+        perguntas_frame.place(relx=.15, rely=.65, relheight=.3, relwidth=.7)
+        self.pergunta = tk.Label(perguntas_frame, text='Pergunta None \n None', wraplength=250)
+        self.pergunta.place(relx=.1, rely=.05, relheight=.55, relwidth=.8)
+        
+        self._chute = tk.StringVar(perguntas_frame)
+        resposta = tk.Entry(perguntas_frame, justify=CENTER, textvariable=self._chute)
+        resposta.place(relx=.1, rely=.65, relheight=.3, relwidth=.55)
+        guess_button = tk.Button(perguntas_frame, text='Guess', command= lambda: self.chute())
+        guess_button.place(relx=.7, rely=.65, relheight=.3, relwidth=.2)
+    
     def right_side_game(self):
         board = tk.Frame(self.mainframe, bg='#539edf') # light blue
         board.place(relx=0.5, rely=0, relheight=1, relwidth=.5)
         
-        players_frame = []
+        self.players_frame = []
         for coluna in range(self.num_players):
-            players_frame.append(tk.Frame(board))
-            players_frame[-1].place(relx=.05 + coluna*(1-0.01*self.num_players)/self.num_players, rely=.1, relheight=.2, relwidth=(.9-0.05*self.num_players)/self.num_players)
-            tk.Label(players_frame[-1], text=self.players[coluna]).place(relx=0, rely=0, relheight=.5, relwidth=1)
-            tk.Label(players_frame[-1], text=self.pontuacao[coluna], bg='#787878').place(relx=0, rely=.5, relheight=.5, relwidth=1)
+            self.players_frame.append(tk.Frame(board))
+            self.players_frame[-1].place(relx=.05 + coluna*(1-0.01*self.num_players)/self.num_players, rely=.1, relheight=.2, relwidth=(.9-0.05*self.num_players)/self.num_players)
+            tk.Label(self.players_frame[-1], text=self.players[coluna]).place(relx=0, rely=0, relheight=.5, relwidth=1)
+            tk.Label(self.players_frame[-1], text=self.pontuacao[coluna], bg='#787878').place(relx=0, rely=.5, relheight=.5, relwidth=1)
     
     
     def to_dict(self, items):
@@ -114,26 +143,42 @@ class Application(Perfil):
         self.opcoes_perguntas[id_button]['bg'] = '#dd1717'
         self.opcoes_perguntas[id_button]['state'] = DISABLED
         self.pergunta['text'] = 'Pergunta {0}\n{1}'.format(id_button, self.card[str(id_button)])
-#         new_question()
+        self.vez_de_quem = (self.dealer + 1) % self.num_players
+        self.pontos_rodada -= 1
     
-    def chute(self, chute):
-        self.pontuacao[0] += 10
-        if chute.upper() == self.card['resposta'].upper():
+    def chute(self):
+        if self._chute.get().upper() == self.card['resposta'].upper():
             self.reset_questions()
             self.next_card()
+            self.att_points(self.vez_de_quem)
             # outras consequencias, óbvio
-            # contar pontos
-            # mudar a vez de quem é
-        
+        self._chute.set('')
+        self.pergunta['text'] = ''
+        self.players_frame[self.vez_de_quem].winfo_children()[0]['bg'] = '#eae8e8'
+        self.vez_de_quem = (self.dealer + 1) % self.num_players
+        self.players_frame[self.vez_de_quem].winfo_children()[0]['bg'] = '#b9ba05'
+        root.update_idletasks()
+    
+    def att_labels(self):
+        self.label_rodada.config(text = self.rodada)
+        self.label_id_card.config(text = self.card['id'])
+        self.label_dica.config(text = self.card['dica'])
     
     def reset_questions(self):
         for question in self.opcoes_perguntas.values():
-            # question['bg'] = '#dd1717'
+            question['bg'] = '#eae8e8'
             question['state'] = NORMAL
     
     def end_tudo(self):
         root.after(5000, root.destroy())
-
+    
+    def att_points(self, pos):
+        self.pontuacao[pos] += self.pontos_rodada
+        
+    
+    
+    
+    
 root = Tk()
 app = Application(root)
 root.mainloop()

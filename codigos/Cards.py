@@ -33,4 +33,7 @@ class Cards:
             self.card = carta
             self.id = carta['id']
             self.dica = carta['dica']
+            self.att_labels()
+            self.pontos_rodada = 20
+            self.next_dealer()
             return
