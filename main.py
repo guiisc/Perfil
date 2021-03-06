@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from codigos.Perfil import *
+from application.application import *
 
-perfil = Perfil()
-perfil.partida()
+root = Tk()
+app = Application(root)
+root.mainloop()

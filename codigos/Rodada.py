@@ -46,7 +46,7 @@ class Rodada():
                 if not self.casos_exepcionais(self.card[question]): return False
                 return True
     
-    def casos_exepcionais(self, caso):
+    def casos_exepcionais2(self, caso):
         """
         
         Quando cai em 'perde a vez', avance 2 casas, escolha alguém para voltar 3 casas
