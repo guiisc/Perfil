@@ -58,9 +58,28 @@ class Board_Frame:
         frame_board = tk.Frame(self.mainframe, bg='#539edf') # light blue
         frame_board.place(relx=0.5, rely=0, relheight=1, relwidth=.5)
         
+        
+        row = int(np.sqrt(self.num_players))
+        _height = (.9-0.05*row)/row
+        col = int(np.ceil(self.num_players/row))
+        _width = (.9-0.05*col)/col
+        completed_rows = 0
+        
         self.players_frame = []
-        for coluna in range(self.num_players):
+        for player in range(self.num_players):
             self.players_frame.append(tk.Frame(frame_board))
-            self.players_frame[-1].place(relx=.05 + coluna*(1-0.01*self.num_players)/self.num_players, rely=.1, relheight=.2, relwidth=(.9-0.05*self.num_players)/self.num_players)
-            tk.Label(self.players_frame[-1], text=self.players[coluna]).place(relx=0, rely=0, relheight=.5, relwidth=1)
-            tk.Label(self.players_frame[-1], text=self.pontuacao[coluna], bg='#787878').place(relx=0, rely=.5, relheight=.5, relwidth=1)
+            self.players_frame[-1].place(relx=.05 + int(player%col) * (0.05 + _width), rely=.05 + (0.07 + _height)*completed_rows, relheight=_height, relwidth=_width)
+            tk.Label(self.players_frame[-1], text=self.players[player]).place(relx=0, rely=0, relheight=.5, relwidth=1)
+            tk.Label(self.players_frame[-1], text=self.pontuacao[player], bg='#787878').place(relx=0, rely=.5, relheight=.5, relwidth=1) # dark grey
+            
+            if len(self.players_frame)%col == 0:
+                completed_rows += 1
+        
+        
+        
+        # self.players_frame = []
+        # for coluna in range(self.num_players):
+        #     self.players_frame.append(tk.Frame(frame_board))
+        #     self.players_frame[-1].place(relx=.05 + coluna*(1-0.01*self.num_players)/self.num_players, rely=.1, relheight=.2, relwidth=(.9-0.05*self.num_players)/self.num_players)
+        #     tk.Label(self.players_frame[-1], text=self.players[coluna]).place(relx=0, rely=0, relheight=.5, relwidth=1)
+        #     tk.Label(self.players_frame[-1], text=self.pontuacao[coluna], bg='#787878').place(relx=0, rely=.5, relheight=.5, relwidth=1) # dark grey
