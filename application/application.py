@@ -4,12 +4,13 @@
 from codigos.Cards import *
 from application.welcome_frame import *
 from application.board_frame import *
+from application.casos_especiais import *
 import numpy as np
 import time
 from tkinter import *
 import tkinter as tk
 
-class Application(Cards, Welcome, Board_Frame):
+class Application(Cards, Welcome, Board_Frame, Especiais):
     def __init__(self, root):
         root.title('Perfil')
         self.mainframe = tk.Frame(root, height='12c', width='30c', bg='#f26d14') # orange
@@ -17,6 +18,7 @@ class Application(Cards, Welcome, Board_Frame):
         Cards.__init__(self)
         Welcome.__init__(self)
         Board_Frame.__init__(self)
+        Especiais.__init__(self)
         self.welcome()
 
     def game(self):
@@ -52,6 +54,7 @@ class Application(Cards, Welcome, Board_Frame):
     def chute(self):
         if self._guess.get().upper() == self.card['resposta'].upper() or self.pontos_rodada == 0:
             self.att_points(self.vez_de_quem)
+            self.mostrar_resposta()
             self.reset_questions()
             self.next_card()
             # outras consequencias, óbvio
@@ -77,7 +80,11 @@ class Application(Cards, Welcome, Board_Frame):
     
     def att_points(self, pos):
         self.pontuacao[pos] += self.pontos_rodada
-        self.players_frame[pos].winfo_children()[1]['text'] = self.pontuacao[pos]
+        self.att_label_pontuacao()
+    
+    def att_label_pontuacao(self):
+        for pos in range(len(self.players_frame)):
+            self.players_frame[pos].winfo_children()[1]['text'] = self.pontuacao[pos]
         
     def func_next_player(self):
         self.players_frame[self.vez_de_quem].winfo_children()[0]['bg'] = '#eae8e8'
@@ -88,26 +95,3 @@ class Application(Cards, Welcome, Board_Frame):
         time.sleep(5)
         root.destroy()
     
-    def casos_exepcionais(self, caso):
-        """
-        
-        Quando cai em 'perde a vez', avance 2 casas, escolha alguém para voltar 3 casas
-        """
-        if caso == 'Perde a vez':
-            self.func_next_player()
-        elif caso == 'Escolha alguém para avançar 2 casas':
-            while True:
-                player = input("escolha um entre {0}:\n".format(self.players))
-                if not player in self.players: continue
-                player = (self.players==player).argmax()
-                if not player == self.vez_de_quem: continue # Não pode escolher a si mesmo
-                self.pontuacao[player] += 2
-                return
-        elif caso == 'Escolha alguém para recuar 3 casas':
-            while True:
-                player = input("escolha um entre {0}:\n".format(self.players))
-                if not player in self.players: continue
-                player = (self.players==player).argmax()
-                self.pontuacao[player] = np.max(self.pontuacao[player] - 3, 0) # Não pode ficar negativo
-                return
-        return

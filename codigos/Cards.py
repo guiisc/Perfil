@@ -21,10 +21,10 @@ class Cards:
         self.pontos_rodada = 20
         while True:
             carta = self.mount_cards.pop(np.random.randint(0, len(self.mount_cards), 1)[0])
-            if np.random.random(1) >= 1.85:
+            if np.random.random(1) >= 0:
                 pos_palpite = np.random.randint(1, 20, 1)[0]
                 carta['{0}'.format(pos_palpite)] = 'Escolha alguém para avançar 2 casas'
-            if np.random.random(1) >= 1.85:
+            if np.random.random(1) >= 0:
                 pos_palpite = np.random.randint(1, 20, 1)[0]
                 carta['{0}'.format(pos_palpite)] = 'Escolha alguém para recuar 3 casas'
             if np.random.random(1) >= 0.3:

@@ -12,6 +12,8 @@
 
 ## <i> Features a serem implementadas </i>
 - 'Palpite a qualquer hora'
-- 'Avançar/recuar x casas'
-- Evitar alguma categoria de perguntas
+- Configurações arbitrátias antes de iniciar o jogo
+    - quantos pontos para terminar o jogo
+    - categoria de pergunta a ser evitada
+    
 

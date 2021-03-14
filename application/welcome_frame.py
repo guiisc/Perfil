@@ -15,11 +15,11 @@ class Welcome:
         
         Set welcome Frame
         """
-        self.frame_begin = tk.Frame(self.mainframe, bg='#000000')
+        self.frame_begin = tk.Frame(self.mainframe, bg='#2d2b2b') # gray
         self.frame_begin.place(relx=.1, rely=.1, relheight=.8, relwidth=.8)
-        greeting = tk.Label(self.frame_begin, text='Welcome to Perfil', bg='#9033df')
+        greeting = tk.Label(self.frame_begin, text='Welcome to Perfil', bg='#9033df', fg='#000000', font=('Arial', 16))
         greeting.place(relx=.3, rely=.13 , relheight=.15, relwidth=.4)
-        which_entry = tk.Label(self.frame_begin, text='Number of Players')
+        which_entry = tk.Label(self.frame_begin, text='Number of Players', font=('Arial', 12))
         which_entry.place(relx=.3, rely=.3 , relheight=.07, relwidth=.4)
         
         self.n_players = StringVar()

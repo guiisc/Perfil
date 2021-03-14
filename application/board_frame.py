@@ -74,12 +74,13 @@ class Board_Frame:
             
             if len(self.players_frame)%col == 0:
                 completed_rows += 1
+    
+    def mostrar_resposta(self):
+        frame_mostrar_resposta = tk.Frame(self.mainframe)
+        frame_mostrar_resposta.place(relx=0.25, rely=0.25, relheight=0.5, relwidth=0.5)
         
+        label_mostrar_resposta = tk.Label(frame_mostrar_resposta, bg='#ff0000', fg='#000000', font=('Arial', 16)) # Red
+        label_mostrar_resposta.place(relx = 0, rely = 0, relheight = 1, relwidth = 1)
+        label_mostrar_resposta['text'] = 'DICA: {0}\nRESPOSTA: {1}'.format(self.card['dica'], self.card['resposta'])
         
-        
-        # self.players_frame = []
-        # for coluna in range(self.num_players):
-        #     self.players_frame.append(tk.Frame(frame_board))
-        #     self.players_frame[-1].place(relx=.05 + coluna*(1-0.01*self.num_players)/self.num_players, rely=.1, relheight=.2, relwidth=(.9-0.05*self.num_players)/self.num_players)
-        #     tk.Label(self.players_frame[-1], text=self.players[coluna]).place(relx=0, rely=0, relheight=.5, relwidth=1)
-        #     tk.Label(self.players_frame[-1], text=self.pontuacao[coluna], bg='#787878').place(relx=0, rely=.5, relheight=.5, relwidth=1) # dark grey
+        tk.Button(frame_mostrar_resposta, text='x', command=frame_mostrar_resposta.destroy).place(relx = .95, rely = 0, relheight = .1, relwidth = .05)
