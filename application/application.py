@@ -12,8 +12,9 @@ import tkinter as tk
 
 class Application(Cards, Welcome, Board_Frame, Especiais):
     def __init__(self, root):
-        root.title('Perfil')
-        self.mainframe = tk.Frame(root, height='12c', width='30c', bg='#f26d14') # orange
+        self.root = root
+        self.root.title('Perfil')
+        self.mainframe = tk.Frame(self.root, height='12c', width='30c', bg='#f26d14') # orange
         self.mainframe.grid(column=1, row=1, columnspan=10, rowspan=10)
         Cards.__init__(self)
         Welcome.__init__(self)
@@ -45,12 +46,10 @@ class Application(Cards, Welcome, Board_Frame, Especiais):
     def choosen_question(self, id_button):
         self.button_20_questions[id_button]['bg'] = '#dd1717'
         self.button_20_questions[id_button]['state'] = DISABLED
-        self.label_round_hint['text'] = 'Pergunta {0}\n{1}'.format(id_button, self.card[str(id_button)])
+        self.label_round_hint['text'] = 'Pergunta {0}\n{1}'.format(id_button, self.card['perguntas'][str(id_button)])
         self.pontos_rodada -= 1
-        self.casos_exepcionais(self.card[str(id_button)])
+        self.casos_exepcionais(self.card['perguntas'][str(id_button)])
         
-        # root.wait_variable(self._guess)
-    
     def chute(self):
         if self._guess.get().upper() == self.card['resposta'].upper() or self.pontos_rodada == 0:
             self.att_points(self.vez_de_quem)
@@ -93,5 +92,5 @@ class Application(Cards, Welcome, Board_Frame, Especiais):
     
     def end_game(self):
         time.sleep(5)
-        root.destroy()
+        self.root.destroy()
     
