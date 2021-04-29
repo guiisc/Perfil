@@ -8,8 +8,8 @@ class Cards:
         pass
     
     def reset_mount(self):
-        path = os.path.realpath('..')
-        self.mount_cards = json.load(open(path+'\Perfil\perguntas.json'), encoding='None')
+        path = os.path.realpath('')
+        self.mount_cards = json.load(open(path+'\perguntas.json'), encoding='None')
         self.rodada = 0
     
     def next_card(self):
